@@ -1,0 +1,70 @@
+<?php
+
+namespace mitch\schemacompare;
+
+class MysqlSchemaGenerator extends SchemaGenerator
+{
+    public $queries = [];
+    public $database;
+
+    public function ColumnDefinition(Column $column)
+    {
+        $notNull = $column->notNull ? 'not null' : '';
+        $default = $column->default ? "default '$column->default'" : '';
+        $extra = $column->extra;
+
+        return "{$column->name} {$column->dbType} {$notNull} {$default} {$extra}";
+    }
+
+    public function AlterColumn(Column $column)
+    {
+        $this->queries[] = "alter table {$column->table->name} modify COLUMN " . self::ColumnDefinition($column) . ";\n";
+    }
+
+    public function DropColumn(Column $column)
+    {
+        $this->queries[] = "alter table {$column->table->name} drop column {$column->name};\n";
+    }
+
+    public function AddColumn(Column $column)
+    {
+        $this->queries[] = "alter table {$column->table->name} add column " . self::ColumnDefinition($column) . ";\n";
+    }
+
+    public function DropTable(Table $table)
+    {
+        $this->queries[] = "drop table $table->name" . ";\n";
+    }
+
+    public function CreateTable(Table $table)
+    {
+        $columns = [];
+
+        foreach ($table->columns as $one) {
+            $columns[] = "\t" . self::ColumnDefinition($one);
+        }
+
+        $pk = $table->pk ? ", \nPRIMARY KEY($table->pk)\n" : '';
+
+        $this->queries[] = "create table $table->name (" . "\n"
+            . join(",\n", $columns)
+            . $pk
+            . "\n);\n";
+    }
+
+    public function CreateFk(ForeignKey $fk)
+    {
+        $fkName = self::CreateFkName($fk);
+        $this->queries[] = "alter table $fk->table add constraint $fkName foreign key ($fk->column) references {$fk->refTable}({$fk->refColumn});\n";
+    }
+
+    public function DropFk(ForeignKey $fk)
+    {
+        $this->queries[] = "alter table {$fk->table} DROP FOREIGN KEY {$fk->name};\n";
+    }
+
+    public function migrate()
+    {
+        print_r($this->queries);
+    }
+}

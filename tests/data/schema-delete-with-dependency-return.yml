@@ -1,0 +1,50 @@
+user:
+    columns:
+        id:
+            type: int(11)
+            notNull: true
+            extra: auto_increment
+        name:
+            type: varchar(128)
+            notNull: false
+        email:
+            type: varchar(128)
+            notNull: true
+        password:
+            type: varchar(128)
+            notNull: true
+    pk: id
+book_author:
+    columns:
+        id:
+            type: int(11)
+            notNull: true
+            extra: auto_increment
+        name:
+            type: varchar(128)
+            notNull: true
+        book_id:
+            type: int(11)
+            notNull: false
+        user_id:
+            type: int(11)
+            notNull: false
+    fks:
+        user_id: user(id)
+    pk: id
+role:
+    columns:
+        id:
+            type: int(11)
+            notNull: true
+            extra: auto_increment
+        name:
+            type: varchar(128)
+            notNull: false
+        user_id:
+            type: int(11)
+            notNull: false
+    fks:
+        user_id: user(id)
+    pk: id
+
