@@ -7,13 +7,37 @@ class MysqlSchemaGenerator extends SchemaGenerator
     public $queries = [];
     public $database;
 
+    protected $_typeConfig = null;
+
+    public function getType($type){
+
+        if($this->_typeConfig == null){
+            $typeConfig = require __DIR__ . '/config/type-mappings.php';
+            $this->_typeConfig = array_flip(array_reverse($typeConfig['mysql']));
+        }
+
+        return $this->_typeConfig[$type];
+    }
+
     public function ColumnDefinition(Column $column)
     {
         $notNull = $column->notNull ? 'not null' : '';
         $default = $column->default ? "default '$column->default'" : '';
         $extra = $column->extra;
 
-        return "{$column->name} {$column->dbType} {$notNull} {$default} {$extra}";
+        $dbType = $column->dbType;
+//        $dbType = $this->getType($dbType);
+
+
+        if($column->length){
+            $dbType.= "({$column->length})";
+        }
+
+        if($column->unsigned){
+            $dbType .= ' ' . 'unsigned';
+        }
+
+        return "{$column->name} {$dbType} {$notNull} {$default} {$extra}";
     }
 
     public function AlterColumn(Column $column)

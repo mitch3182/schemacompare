@@ -1,13 +1,18 @@
 <?php
 
-namespace mitch\schemacompare;
+namespace mitch\schemacompare\providers;
 
+use mitch\schemacompare\Table;
+use mitch\schemacompare\Column;
+use mitch\schemacompare\ForeignKey;
 
 class MysqlSchemaProvider extends SchemaProvider
 {
 
     /** @var Database */
     public $database;
+
+    public $typeConfig = 'mysql';
 
     public function prepareSchema()
     {
@@ -23,11 +28,26 @@ class MysqlSchemaProvider extends SchemaProvider
 
             foreach ($columnsInfo as $columnInfo) {
 
+                $length = null;
                 $columnModel = new Column;
                 $columnModel->table = $tableModel;
 
                 $columnModel->name = $columnInfo['Field'];
-                $columnModel->dbType = $columnInfo['Type'];
+
+                $dbtype = $this->parseFuncString($columnInfo['Type']);
+
+                if($dbtype != null){
+                    list($dbtype, $length) = $dbtype;
+                }else{
+                    $dbtype = $columnInfo['Type'];
+                }
+                if(strpos($dbtype, 'unsigned') !== false){
+                    $dbtype = trim(str_replace('unsigned', '', $dbtype));
+                    $columnModel->unsigned = true;
+                }
+
+                $columnModel->dbType = $dbtype;
+                $columnModel->length = $length != null ? $length : null;
                 $columnModel->notNull = $columnInfo['Null'] == 'NO';
                 $columnModel->default = $columnInfo['Default'];
                 $columnModel->extra = $columnInfo['Extra'];

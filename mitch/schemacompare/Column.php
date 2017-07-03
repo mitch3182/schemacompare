@@ -12,6 +12,8 @@ class Column
     public $notNull;
     public $extra;
     public $default;
+    public $length;
+    public $unsigned;
 
     public $delete = false;
 
@@ -24,11 +26,14 @@ class Column
 //    ];
 
     public function compare($otherColumn){
-        $fields = ['name', 'dbType', 'comment', 'notNull', 'extra', 'default'];
+        $fields = ['name', 'dbType', 'comment', 'notNull', 'extra', 'default', 'length', 'unsigned'];
         $equal = true;
         foreach($fields as $field){
-            $equal &= $this->$field == $otherColumn->$field;
+            $eq = $this->$field == $otherColumn->$field;
+            if (!$eq){
+                return false;
+            }
         }
-        return $equal;
+        return true;
     }
 }

@@ -61,7 +61,7 @@ if($command == 'inspectdb'){
 
     $path = $argv[2];
 
-    $provider = new \mitch\schemacompare\MysqlSchemaProvider(['database' => $db]);
+    $provider = new \mitch\schemacompare\providers\MysqlSchemaProvider(['database' => $db]);
     $schema = $provider->getSchema();
     \mitch\schemacompare\SchemaDump::Dump($schema, $path);
 }
@@ -74,10 +74,10 @@ if($command == 'sync'){
 
     $path = $argv[2];
 
-    $provider = new \mitch\schemacompare\MysqlSchemaProvider(['database' => $db]);
+    $provider = new \mitch\schemacompare\providers\MysqlSchemaProvider(['database' => $db]);
     $schema1 = $provider->getSchema();
 
-    $schema2 = new \mitch\schemacompare\YamlSchemaProvider(['path' => $path]);
+    $schema2 = new \mitch\schemacompare\providers\YamlSchemaProvider(['path' => $path]);
     $schema2 = $schema2->getSchema();
 
     if (!isset($namedArgs['generator'])){
@@ -92,6 +92,13 @@ if($command == 'sync'){
             die("--path= required\n");
         }
         $generator = new \mitch\schemacompare\Yii1SchemaGenerator(['database' => $db, 'path' => $namedArgs['path']]);
+    }
+
+    if($namedArgs['generator'] == 'yii2'){
+        if(!isset($namedArgs['path'])){
+            die("--path= required\n");
+        }
+        $generator = new \mitch\schemacompare\Yii2SchemaGenerator(['database' => $db, 'path' => $namedArgs['path']]);
     }
 
     $compare = new \mitch\schemacompare\SchemaCompare([

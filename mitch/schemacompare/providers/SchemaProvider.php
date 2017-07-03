@@ -1,9 +1,38 @@
 <?php
 
-namespace mitch\schemacompare;
+namespace mitch\schemacompare\providers;
+
+use mitch\schemacompare\Object;
+use mitch\schemacompare\Schema;
 
 abstract class SchemaProvider extends Object
 {
+    public $typeConfig = '';
+//    /**
+//     * Must translate db type to local yml type such as int => integer
+//     * @param $type
+//     * @return mixed
+//     */
+//    public function dbTypeToLocal($type){
+//        $config = require __DIR__ . '/../config/type-mappings.php';
+//        $config = $config[$this->typeConfig];
+//        return $config[$type];
+//    }
+
+    /**
+     * Parse string. For example: article(id) return ['article', 'id']
+     * @param $type
+     * @return array
+     */
+    public function parseFuncString($type)
+    {
+        preg_match("/([A-z_0-9,]*?)\\(([A-z_0-9,]*?)\\)/", $type, $matches);
+        if (count($matches) === 3) {
+            return [$matches[1], $matches[2]];
+        }
+        return null;
+    }
+
     /** @return Schema */
     public function getSchema()
     {

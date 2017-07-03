@@ -1,10 +1,19 @@
 <?php
 
-namespace mitch\schemacompare;
+namespace mitch\schemacompare\providers;
+
+use mitch\schemacompare\Table;
+use mitch\schemacompare\Column;
+use mitch\schemacompare\ForeignKey;
 
 class YamlSchemaProvider extends SchemaProvider
 {
     public $path = 'schema.yml';
+
+//    public function dbTypeToLocal($type)
+//    {
+//        return $type;
+//    }
 
     public function prepareSchema()
     {
@@ -27,37 +36,43 @@ class YamlSchemaProvider extends SchemaProvider
                 $columnModel->notNull = isset($columnInfo['notNull']) ? (bool) $columnInfo['notNull'] : false;
                 $columnModel->default = isset($columnInfo['default']) ? $columnInfo['default'] : null;
 
+                if(!empty($columnInfo['length'])){
+                    $columnModel->length = $columnInfo['length'];
+                }
+
+                $columnModel->unsigned = isset($columnInfo['unsigned']) ? $columnInfo['unsigned'] : null;
+
                 $columnModel->extra = isset($columnInfo['extra']) ? $columnInfo['extra'] : null;
 
                 $tableModel->addColumn($columnModel);
             }
 
 
-            if(isset($tableInfo['fks'])){
+            if (isset($tableInfo['fks'])) {
 
                 foreach ($tableInfo['fks'] as $sourceColname => $keyInfo) {
 
-                    preg_match("/([A-z_]*?)\\(([A-z_]*?)\\)/", $keyInfo, $matches);
+                    list($m1, $m2) = $this->parseFuncString($keyInfo);
 
-                    if(isset($matches[1]) && isset($matches[2])){
+                    if (isset($m1) && isset($m2)) {
 
                         $col = $tableModel->getColumn($sourceColname);
 
-                        if($col == null){
+                        if ($col == null) {
                             throw new Exception("FK ERROR: Такой колонки нет {$tableName}:{$sourceColname}");
                         }
 
                         $fk = new ForeignKey([
                             'table' => $tableName,
                             'column' => $sourceColname,
-                            'refTable' => $matches[1],
-                            'refColumn' => $matches[2],
+                            'refTable' => $m1,
+                            'refColumn' => $m2,
                         ]);
 
                         $col->dependencies[] = $fk;
                         $tableModel->fks[] = $fk;
-                    }else{
-                        
+                    } else {
+
                     }
                 }
             }

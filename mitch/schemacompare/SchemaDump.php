@@ -28,6 +28,13 @@ class SchemaDump
                 if ( ! is_null($columnInfo->extra) && $columnInfo->extra != null) {
                     $output[$table->name]['columns'][$columnInfo->name]['extra'] = $columnInfo->extra;
                 }
+
+                if ( ! is_null($columnInfo->length) && $columnInfo->length != null) {
+                    $output[$table->name]['columns'][$columnInfo->name]['length'] = $columnInfo->length;
+                }
+                if ( ! is_null($columnInfo->unsigned) && $columnInfo->unsigned != null) {
+                    $output[$table->name]['columns'][$columnInfo->name]['unsigned'] = $columnInfo->unsigned;
+                }
             }
 
 
