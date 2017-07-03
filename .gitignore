@@ -1,2 +1,5 @@
 .idea
 vendor
+
+# local tmp yml files
+/*.yml
