@@ -42,7 +42,7 @@ class SchemaDump
                 if ( ! isset($output[$table->name]['fks'])) {
                     $output[$table->name]['fks'] = [];
                 }
-                $output[$table->name]['fks'][$fk->column] = $fk->refTable . '(' . $fk->refColumn . ') ' . $fk->onDelete . ' ' . $fk->onDelete;
+                $output[$table->name]['fks'][$fk->column] = $fk->refTable . '(' . $fk->refColumn . '):' . $fk->onDelete . ':' . $fk->onUpdate;
             }
         }
 

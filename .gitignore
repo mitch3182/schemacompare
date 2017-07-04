@@ -3,3 +3,4 @@ vendor
 
 # local tmp yml files
 /*.yml
+/tmp

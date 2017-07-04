@@ -52,7 +52,7 @@ class YamlSchemaProvider extends SchemaProvider
 
                 foreach ($tableInfo['fks'] as $sourceColname => $keyInfo) {
 
-                    list($keyInfo, $onDelete, $onUpdate) = explode(' ', $keyInfo);
+                    list($keyInfo, $onDelete, $onUpdate) = explode(':', $keyInfo);
                     list($m1, $m2) = $this->parseFuncString($keyInfo);
 
                     if (isset($m1) && isset($m2)) {
