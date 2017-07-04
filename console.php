@@ -62,8 +62,11 @@ if($command == 'inspectdb'){
     $path = $argv[2];
 
     $provider = new \mitch\schemacompare\providers\MysqlSchemaProvider(['database' => $db]);
+    echo "dump schema from db\n";
     $schema = $provider->getSchema();
+    echo "write to file\n";
     \mitch\schemacompare\SchemaDump::Dump($schema, $path);
+    echo "done\n";
 }
 
 if($command == 'sync'){
@@ -74,9 +77,11 @@ if($command == 'sync'){
 
     $path = $argv[2];
 
+    echo "get schema from db\n";
     $provider = new \mitch\schemacompare\providers\MysqlSchemaProvider(['database' => $db]);
     $schema1 = $provider->getSchema();
 
+    echo "get schema yml db\n";
     $schema2 = new \mitch\schemacompare\providers\YamlSchemaProvider(['path' => $path]);
     $schema2 = $schema2->getSchema();
 
@@ -108,6 +113,9 @@ if($command == 'sync'){
         'database' => $db,
     ]);
 
+    echo "compare\n";
     $generator = $compare->compare();
+    echo "migrate\n";
     $generator->migrate();
+    echo "done\n";
 }

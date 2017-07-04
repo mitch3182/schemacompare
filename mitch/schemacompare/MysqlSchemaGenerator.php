@@ -79,7 +79,7 @@ class MysqlSchemaGenerator extends SchemaGenerator
     public function CreateFk(ForeignKey $fk)
     {
         $fkName = self::CreateFkName($fk);
-        $this->queries[] = "alter table $fk->table add constraint $fkName foreign key ($fk->column) references {$fk->refTable}({$fk->refColumn});\n";
+        $this->queries[] = "alter table $fk->table add constraint $fkName foreign key ($fk->column) references {$fk->refTable}({$fk->refColumn}) ON DELETE {$fk->onDelete} ON UPDATE {$fk->onUpdate};\n";
     }
 
     public function DropFk(ForeignKey $fk)

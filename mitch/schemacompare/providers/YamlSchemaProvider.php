@@ -52,6 +52,7 @@ class YamlSchemaProvider extends SchemaProvider
 
                 foreach ($tableInfo['fks'] as $sourceColname => $keyInfo) {
 
+                    list($keyInfo, $onDelete, $onUpdate) = explode(' ', $keyInfo);
                     list($m1, $m2) = $this->parseFuncString($keyInfo);
 
                     if (isset($m1) && isset($m2)) {
@@ -59,7 +60,7 @@ class YamlSchemaProvider extends SchemaProvider
                         $col = $tableModel->getColumn($sourceColname);
 
                         if ($col == null) {
-                            throw new Exception("FK ERROR: Такой колонки нет {$tableName}:{$sourceColname}");
+                            throw new \Exception("FK ERROR: Такой колонки нет {$tableName}:{$sourceColname}");
                         }
 
                         $fk = new ForeignKey([
@@ -67,6 +68,8 @@ class YamlSchemaProvider extends SchemaProvider
                             'column' => $sourceColname,
                             'refTable' => $m1,
                             'refColumn' => $m2,
+                            'onDelete' => $onDelete,
+                            'onUpdate' => $onUpdate,
                         ]);
 
                         $col->dependencies[] = $fk;

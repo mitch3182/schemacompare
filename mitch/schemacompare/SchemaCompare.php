@@ -98,9 +98,7 @@ class SchemaCompare extends Object
             if ( ! $table1->delete) { // зачем второй раз проходиться
                 $table2 = $this->schema2->getTable($table1->name);
                 foreach ($table1->fks as &$fk1) {
-                    if ( ! $table2->hasFk($fk1)) {
-                        // drop fk
-//                        echo "drop fk\n";
+                    if ( $table2->getFk($fk1) === false) {
                         $fk1->name = $this->database->getFkNameFromDb($fk1);
                         $this->dropFks[] = $fk1;
                     }
@@ -111,9 +109,15 @@ class SchemaCompare extends Object
             if ( ! $table2->delete) { // зачем второй раз проходиться
                 $table1 = $this->schema1->getTable($table2->name);
                 foreach ($table2->fks as $fk1) {
-                    if ($table1 == null || ! $table1->hasFk($fk1)) {
-                        // create fk
-//                        echo "create fk\n";
+                    $otherFk = $table1->getFk($fk1);
+
+                    if($otherFk === false || $table1 == null){
+                        $this->addFks[] = $fk1;
+                    }
+                    else if(!$otherFk->compare($fk1)){
+                        // recreate constraint
+                        $otherFk->name = $this->database->getFkNameFromDb($otherFk);
+                        $this->dropFks[] = $otherFk;
                         $this->addFks[] = $fk1;
                     }
                 }

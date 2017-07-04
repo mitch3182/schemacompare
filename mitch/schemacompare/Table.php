@@ -40,7 +40,11 @@ class Table
         return null;
     }
 
-    public function hasFk(ForeignKey $fk){
+    /**
+     * @param ForeignKey $fk
+     * @return bool|ForeignKey
+     */
+    public function getFk(ForeignKey $fk){
         foreach($this->fks as $fk1){
             if(
                 $fk1->table == $fk->table
@@ -48,7 +52,7 @@ class Table
                 && $fk1->refTable == $fk->refTable
                 && $fk1->refColumn == $fk->refColumn
             ){
-                return true;
+                return $fk1;
             }
         }
         return false;

@@ -131,7 +131,7 @@ class Yii2SchemaGenerator extends SchemaGenerator
         $fkName = $this->CreateFkName($one);
         $this->renderTemplate([
             'name' => 'add_fk',
-            'code' => "\$this->addForeignKey('{$fkName}', '{$one->table}', '{$one->column}', '{$one->refTable}', '{$one->refColumn}');",
+            'code' => "\$this->addForeignKey('{$fkName}', '{$one->table}', '{$one->column}', '{$one->refTable}', '{$one->refColumn}', '{$one->onDelete}', '{$one->inUpdate}');",
         ]);
     }
 

@@ -27,7 +27,6 @@ class Column
 
     public function compare($otherColumn){
         $fields = ['name', 'dbType', 'comment', 'notNull', 'extra', 'default', 'length', 'unsigned'];
-        $equal = true;
         foreach($fields as $field){
             $eq = $this->$field == $otherColumn->$field;
             if (!$eq){

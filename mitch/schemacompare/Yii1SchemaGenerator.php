@@ -49,8 +49,8 @@ class Yii1SchemaGenerator extends SchemaGenerator
         $fkName = $this->database->getFkNameFromDb($one);
 
         $this->renderTemplate([
-            'name' => 'drop_fk',
-            'code' => "\$this->dropForeignKey('$fkName', '{$one->table->name}');",
+            'name' => "drop_fk_{$one->table}_{$one->column}",
+            'code' => "\$this->dropForeignKey('$fkName', '{$one->table}');",
         ]);
     }
 
@@ -109,8 +109,8 @@ class Yii1SchemaGenerator extends SchemaGenerator
 
         $fkName = $this->CreateFkName($one);
         $this->renderTemplate([
-            'name' => 'add_fk',
-            'code' => "\$this->addForeignKey('{$fkName}', '{$one->table}', '{$one->column}', '{$one->refTable}', '{$one->refColumn}');",
+            'name' => "add_fk_{$one->table}_{$one->column}",
+            'code' => "\$this->addForeignKey('{$fkName}', '{$one->table}', '{$one->column}', '{$one->refTable}', '{$one->refColumn}', '{$one->onDelete}', '{$one->onUpdate}');",
         ]);
     }
 
