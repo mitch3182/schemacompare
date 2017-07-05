@@ -23,7 +23,7 @@ class YamlSchemaProvider extends SchemaProvider
 
             $tableModel = new Table();
             $tableModel->name = $tableName;
-            $tableModel->pk = isset($tableInfo['pk']) ? $tableInfo['pk'] : null;
+            $tableModel->pk = isset($tableInfo['pk']) ? $tableInfo['pk'] : 'id';
             $columnsInfo = $tableInfo['columns'];
 
             foreach ($columnsInfo as $columnName => $columnInfo) {
