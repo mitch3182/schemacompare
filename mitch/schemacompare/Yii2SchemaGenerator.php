@@ -38,6 +38,7 @@ class Yii2SchemaGenerator extends SchemaGenerator
             'varchar' => "\$this->string($length)",
             'text' => "\$this->text($length)",
             'int' => "\$this->integer($length)",
+            'tinyint' => "\$this->boolean()",
         ];
 
         $def = $funcMapping[$column->dbType];
@@ -46,7 +47,7 @@ class Yii2SchemaGenerator extends SchemaGenerator
             $def .= '->notNull()';
         }
 
-        if ($column->default) {
+        if ($column->default !== null) {
             $def .= "->defaultValue('{$column->default}')";
         }
 
@@ -98,8 +99,8 @@ class Yii2SchemaGenerator extends SchemaGenerator
         $columnDefinition = $this->ColumnDefinition($one);
 
         $this->renderTemplate([
-            'name' => 'add_column',
-            'code' => "\$this->addColumn('{$one->table->name}', '{$one->name}', '{$columnDefinition}');",
+            'name' => "add_column_{$one->name}_to_{$one->table->name}",
+            'code' => "\$this->addColumn('{$one->table->name}', '{$one->name}', {$columnDefinition});",
         ]);
     }
 

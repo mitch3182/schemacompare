@@ -11,11 +11,11 @@ class Yii1SchemaGenerator extends SchemaGenerator
     public function renderTemplate($variables)
     {
         $micro_date = microtime();
-        $date_array = explode(" ",$micro_date);
+        $date_array = explode(" ", $micro_date);
         $time = date('ymd_His_') . substr($date_array[0], 2);
 
         extract($variables);
-        $classname = 'm'.$time . '_' . $name;
+        $classname = 'm' . $time . '_' . $name;
 
         $templatePath = __DIR__ . '/../../templates/yii1/Migration.php';
         ob_start();
@@ -23,7 +23,7 @@ class Yii1SchemaGenerator extends SchemaGenerator
         require $templatePath;
 
         $result = ob_get_clean();
-        $fileName = $classname .'.php';
+        $fileName = $classname . '.php';
         file_put_contents($this->path . '/' . $fileName, $result);
     }
 
@@ -33,13 +33,18 @@ class Yii1SchemaGenerator extends SchemaGenerator
         $default = $column->default ? "default '$column->default'" : '';
         $extra = $column->extra;
 
-        return "{$column->dbType} {$notNull} {$default} {$extra}";
+        $dbType = $column->dbType;
+        if ($column->length) {
+            $dbType .= "({$column->length})";
+        }
+
+        return "{$dbType} {$notNull} {$default} {$extra}";
     }
 
     public function DropColumn(Column $one)
     {
         $this->renderTemplate([
-            'name' => 'drop_column',
+            'name' => "drop_column_{$one->name}_from_{$one->table->name}",
             'code' => "\$this->dropColumn('{$one->table->name}', '{$one->name}');",
         ]);
     }
@@ -77,7 +82,7 @@ class Yii1SchemaGenerator extends SchemaGenerator
         $columnDefinition = $this->ColumnDefinition($one);
 
         $this->renderTemplate([
-            'name' => 'add_column',
+            'name' => "add_column_{$one->name}_to_{$one->table->name}",
             'code' => "\$this->addColumn('{$one->table->name}', '{$one->name}', '{$columnDefinition}');",
         ]);
     }
@@ -86,11 +91,11 @@ class Yii1SchemaGenerator extends SchemaGenerator
     {
         $colDefinitions = '';
 
-        if(!empty($one->pk)){
+        if ( ! empty($one->pk)) {
             $colDefinitions .= "\t\t\t'id' => 'pk',\n";
         }
 
-        foreach($one->columns as $column){
+        foreach ($one->columns as $column) {
 
             if ($column->name == 'id') continue;
 
