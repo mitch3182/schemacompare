@@ -18,7 +18,8 @@ class Database
             $this->dbConnectionParams->host,
             $this->dbConnectionParams->user,
             $this->dbConnectionParams->password,
-            $this->dbConnectionParams->database
+            $this->dbConnectionParams->database,
+            $this->dbConnectionParams->port
         );
 
         if($this->conn === false){

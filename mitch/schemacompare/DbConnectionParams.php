@@ -9,4 +9,5 @@ class DbConnectionParams extends Object
     public $user = 'root';
     public $password = null;
     public $database = null;
+    public $port = 3306;
 }
