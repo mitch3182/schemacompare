@@ -80,7 +80,7 @@ class YamlSchemaProvider extends SchemaProvider
                 }
             }
 
-            $this->schema->tables[] = $tableModel;
+            $this->schema->addTable(tableModel);
         }
     }
 }

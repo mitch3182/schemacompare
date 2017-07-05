@@ -65,35 +65,6 @@ class MysqlSchemaProvider extends SchemaProvider
             $tableModel->addColumn($columnModel);
         }
 
-        $keysInfo = $this->database->getForeignKeys($tableName);
-
-        foreach ($keysInfo as $keyInfo) {
-            if ($keyInfo['CONSTRAINT_NAME'] == 'PRIMARY') {
-                $tableModel->pk = $keyInfo['COLUMN_NAME'];
-            } else {
-                if (isset($keyInfo['TABLE_NAME'])
-                    && isset($keyInfo['COLUMN_NAME'])
-                    && isset($keyInfo['REFERENCED_TABLE_NAME'])
-                    && isset($keyInfo['REFERENCED_COLUMN_NAME'])
-                ) {
-
-                    $col = $tableModel->getColumn($keyInfo['COLUMN_NAME']);
-
-                    $fk = new ForeignKey([
-                        'table' => $keyInfo['TABLE_NAME'],
-                        'column' => $keyInfo['COLUMN_NAME'],
-                        'refTable' => $keyInfo['REFERENCED_TABLE_NAME'],
-                        'refColumn' => $keyInfo['REFERENCED_COLUMN_NAME'],
-                        'onDelete' => strtolower($keyInfo['DELETE_RULE']),
-                        'onUpdate' => strtolower($keyInfo['UPDATE_RULE']),
-                    ]);
-
-                    $col->fks[] = $fk;
-                    $tableModel->fks[] = $fk;
-                }
-
-            }
-        }
         return $tableModel;
     }
 
@@ -102,7 +73,43 @@ class MysqlSchemaProvider extends SchemaProvider
         foreach ($this->database->getTableNames() as $tableName) {
             $tableModel = $this->prepareTable($tableName);
             if($tableModel !== false){
-                $this->schema->tables[] = $tableModel;
+                $this->schema->addTable($tableModel);
+            }
+        }
+
+        $this->fetchFkConstraints();
+    }
+
+    public function fetchFkConstraints(){
+        $rows = $this->database->fetchFkConstraints();
+        foreach($rows as $row){
+
+            $tableModel = $this->schema->getTable($row['TABLE_NAME']);
+
+            if ($row['CONSTRAINT_NAME'] == 'PRIMARY') {
+                $tableModel->pk = $row['COLUMN_NAME'];
+            } else {
+                if (isset($row['TABLE_NAME'])
+                    && isset($row['COLUMN_NAME'])
+                    && isset($row['REFERENCED_TABLE_NAME'])
+                    && isset($row['REFERENCED_COLUMN_NAME'])
+                ) {
+
+                    $col = $tableModel->getColumn($row['COLUMN_NAME']);
+
+                    $fk = new ForeignKey([
+                        'table' => $row['TABLE_NAME'],
+                        'column' => $row['COLUMN_NAME'],
+                        'refTable' => $row['REFERENCED_TABLE_NAME'],
+                        'refColumn' => $row['REFERENCED_COLUMN_NAME'],
+                        'onDelete' => strtolower($row['DELETE_RULE']),
+                        'onUpdate' => strtolower($row['UPDATE_RULE']),
+                    ]);
+
+                    $col->fks[] = $fk;
+                    $tableModel->fks[] = $fk;
+                }
+
             }
         }
     }
