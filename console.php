@@ -64,7 +64,7 @@ if($command == 'inspectdb'){
     $provider = new \mitch\schemacompare\providers\MysqlSchemaProvider(['database' => $db]);
     echo "dump schema from db\n";
     $schema = $provider->getSchema();
-    echo "write to file\n";
+    echo "write to file $path\n";
     \mitch\schemacompare\SchemaDump::Dump($schema, $path);
     echo "done\n";
 }
