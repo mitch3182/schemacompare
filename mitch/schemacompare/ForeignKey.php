@@ -20,6 +20,7 @@ class ForeignKey extends Object
         foreach($fields as $field){
             $eq = $this->$field == $otherFk->$field;
             if (!$eq){
+                echo "compare field {$otherFk->name} mismatch $field\n";
                 return false;
             }
         }

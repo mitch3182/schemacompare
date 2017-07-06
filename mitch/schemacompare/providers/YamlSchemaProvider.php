@@ -40,9 +40,20 @@ class YamlSchemaProvider extends SchemaProvider
                     $columnModel->length = $columnInfo['length'];
                 }
 
+                $columnModel->extra = isset($columnInfo['extra']) ? $columnInfo['extra'] : null;
+
                 $columnModel->unsigned = isset($columnInfo['unsigned']) ? $columnInfo['unsigned'] : null;
 
-                $columnModel->extra = isset($columnInfo['extra']) ? $columnInfo['extra'] : null;
+                /**
+                 * Check for timestamp column. It can not be timestamp while notNull and not have default value.
+                 * There are some auto generate extra: on update CURRENT_TIMESTAMP and it can give you bad behavior
+                 * in second start of comparator
+                 **/
+                if($columnModel->dbType == 'timestamp' and $columnModel->notNull and empty($columnModel->default)){
+                    throw new \Exception("You must specify default value for notNull timestamp");
+                }
+
+
 
                 $tableModel->addColumn($columnModel);
             }
@@ -80,7 +91,7 @@ class YamlSchemaProvider extends SchemaProvider
                 }
             }
 
-            $this->schema->addTable(tableModel);
+            $this->schema->addTable($tableModel);
         }
     }
 }

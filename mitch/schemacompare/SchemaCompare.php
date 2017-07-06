@@ -53,6 +53,7 @@ class SchemaCompare extends Object
     public function compare()
     {
 
+        // Проверка таблиц из первой схемы
         foreach ($this->schema1->tables as $table1) {
 
             $table2 = $this->schema2->getTable($table1->name);
@@ -85,6 +86,7 @@ class SchemaCompare extends Object
             }
         }
 
+        // проверка таблиц из второй схемы
         foreach ($this->schema2->tables as $table2) {
             $table1 = $this->schema1->getTable($table2->name);
             if ($table1 == null) {
@@ -98,7 +100,7 @@ class SchemaCompare extends Object
             if ( ! $table1->delete) { // зачем второй раз проходиться
                 $table2 = $this->schema2->getTable($table1->name);
                 foreach ($table1->fks as &$fk1) {
-                    if ( $table2->getFk($fk1) === false) {
+                    if ($table2->getFk($fk1) === false) {
                         $fk1->name = $this->database->getFkNameFromDb($fk1);
                         $this->dropFks[] = $fk1;
                     }
@@ -108,13 +110,19 @@ class SchemaCompare extends Object
         foreach ($this->schema2->tables as $table2) {
             if ( ! $table2->delete) { // зачем второй раз проходиться
                 $table1 = $this->schema1->getTable($table2->name);
+
                 foreach ($table2->fks as $fk1) {
+
+                    if ($table1 == null) {
+                        $this->addFks[] = $fk1;
+                        continue;
+                    }
+
                     $otherFk = $table1->getFk($fk1);
 
-                    if($otherFk === false || $table1 == null){
+                    if ($otherFk === false || $table1 == null) {
                         $this->addFks[] = $fk1;
-                    }
-                    else if(!$otherFk->compare($fk1)){
+                    } else if ( ! $otherFk->compare($fk1)) {
                         // recreate constraint
                         $otherFk->name = $this->database->getFkNameFromDb($otherFk);
                         $this->dropFks[] = $otherFk;

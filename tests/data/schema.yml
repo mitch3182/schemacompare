@@ -1,62 +1,82 @@
 user:
     columns:
         id:
-            type: int(11)
+            type: int
+            length: 11
             notNull: true
             extra: auto_increment
+        dt_created:
+            type: timestamp
+            default: CURRENT_TIMESTAMP
+            notNull: true
+        dt_updated:
+            type: timestamp
+            notNull: false
         name:
-            type: varchar(128)
+            type: varchar
+            length: 128
             notNull: false
         email:
-            type: varchar(128)
+            type: varchar
+            length: 128
             notNull: true
         password:
-            type: varchar(128)
+            type: varchar
+            length: 128
             notNull: true
     pk: id
 book_author:
     columns:
         id:
-            type: int(11)
+            type: int
+            length: 11
             notNull: true
             extra: auto_increment
         name:
-            type: varchar(128)
+            type: varchar
+            length: 128
             notNull: true
         book_id:
-            type: int(11)
+            type: int
+            length: 11
             notNull: false
         user_id:
-            type: int(11)
+            type: int
+            length: 11
             notNull: false
     fks:
-        user_id: user(id)
-        book_id: book(id)
+        user_id: user(id):cascade:cascade
+        book_id: book(id):cascade:cascade
     pk: id
 role:
     columns:
         id:
-            type: int(11)
+            type: int
+            length: 11
             notNull: true
             extra: auto_increment
         name:
-            type: varchar(128)
+            type: varchar
+            length: 11
             notNull: false
         user_id:
-            type: int(11)
+            type: int
+            length: 11
             notNull: false
     fks:
-        user_id: user(id)
+        user_id: user(id):cascade:cascade
     pk: id
 
 book:
     columns:
         id:
-            type: int(11)
+            type: int
+            length: 11
             notNull: true
             extra: auto_increment
         name:
-            type: varchar(128)
+            type: varchar
+            length: 128
             notNull: true
         description:
             type: text

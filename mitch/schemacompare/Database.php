@@ -80,7 +80,9 @@ WHERE
   kcu.TABLE_NAME,kcu.COLUMN_NAME,kcu.CONSTRAINT_NAME, kcu.REFERENCED_TABLE_NAME,kcu.REFERENCED_COLUMN_NAME, rc.UPDATE_RULE, rc.DELETE_RULE
 FROM
   INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
-  left join information_schema.REFERENTIAL_CONSTRAINTS rc on rc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME WHERE
+  left join information_schema.REFERENTIAL_CONSTRAINTS rc 
+  on rc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME and rc.CONSTRAINT_SCHEMA =  '{$this->dbConnectionParams->database}' 
+  WHERE
   kcu.TABLE_SCHEMA = '{$this->dbConnectionParams->database}'";
         $res = mysqli_query($this->conn, $q);
         return $this->fetchAllAssoc($res);

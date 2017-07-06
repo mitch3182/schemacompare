@@ -17,6 +17,7 @@ class SyncCommand extends DbCommand
         $this->setName('sync');
         $this->addOption('generator', 'g', InputOption::VALUE_OPTIONAL, 'which generator use: yii1,yii2,raw', 'raw');
         $this->addOption('dpath', null, InputOption::VALUE_OPTIONAL, 'where to save generated files', '');
+        $this->addOption('execute', 'e', InputOption::VALUE_OPTIONAL, 'execute if generator is raw', false);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -66,7 +67,7 @@ class SyncCommand extends DbCommand
         $generator = $compare->compare();
 
         $output->writeln("migrate");
-        $generator->migrate();
+        $generator->migrate($input->getOption('execute'));
 
         $output->writeln("done");
     }

@@ -29,7 +29,7 @@ class Yii1SchemaGenerator extends SchemaGenerator
 
     public function ColumnDefinition(Column $column)
     {
-        $notNull = $column->notNull ? 'not null' : '';
+        $notNull = $column->notNull ? 'not null' : 'null';
         $default = $column->default ? "default '$column->default'" : '';
         $extra = $column->extra;
 
@@ -119,7 +119,7 @@ class Yii1SchemaGenerator extends SchemaGenerator
         ]);
     }
 
-    public function migrate()
+    public function migrate($execute = false)
     {
         // TODO: Implement migrate() method.
     }

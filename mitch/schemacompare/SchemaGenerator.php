@@ -17,5 +17,5 @@ abstract class SchemaGenerator extends Object
         return 'fk_' . $fk->table . '_' . $fk->column;
     }
 
-    abstract public function migrate();
+    abstract public function migrate($execute = false);
 }

@@ -136,7 +136,7 @@ class Yii2SchemaGenerator extends SchemaGenerator
         ]);
     }
 
-    public function migrate()
+    public function migrate($execute = false)
     {
         // TODO: Implement migrate() method.
     }

@@ -5,6 +5,7 @@ namespace mitch\schemacompare;
 class MysqlSchemaGenerator extends SchemaGenerator
 {
     public $queries = [];
+    /** @var Database */
     public $database;
 
     protected $_typeConfig = null;
@@ -21,8 +22,8 @@ class MysqlSchemaGenerator extends SchemaGenerator
 
     public function ColumnDefinition(Column $column)
     {
-        $notNull = $column->notNull ? 'not null' : '';
-        $default = $column->default ? "default '$column->default'" : '';
+        $notNull = $column->notNull ? 'not null' : 'null';
+        $default = $column->default != null ? "default $column->default" : '';
         $extra = $column->extra;
 
         $dbType = $column->dbType;
@@ -87,8 +88,14 @@ class MysqlSchemaGenerator extends SchemaGenerator
         $this->queries[] = "alter table {$fk->table} DROP FOREIGN KEY {$fk->name};\n";
     }
 
-    public function migrate()
+    public function migrate($execute = false)
     {
         print_r($this->queries);
+
+        if($execute){
+            foreach($this->queries as $query){
+                $this->database->exec($query);
+            }
+        }
     }
 }

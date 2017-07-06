@@ -30,6 +30,7 @@ class Column
         foreach($fields as $field){
             $eq = $this->$field == $otherColumn->$field;
             if (!$eq){
+                echo "compare field {$otherColumn->name} mismatch $field\n";
                 return false;
             }
         }
