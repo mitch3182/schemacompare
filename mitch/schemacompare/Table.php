@@ -47,10 +47,10 @@ class Table
     public function getFk(ForeignKey $fk){
         foreach($this->fks as $fk1){
             if(
-                $fk1->table == $fk->table
-                && $fk1->column == $fk->column
-                && $fk1->refTable == $fk->refTable
-                && $fk1->refColumn == $fk->refColumn
+                $fk1->table === $fk->table
+                && $fk1->column === $fk->column
+                && $fk1->refTable === $fk->refTable
+                && $fk1->refColumn === $fk->refColumn
             ){
                 return $fk1;
             }

@@ -109,9 +109,24 @@ class SchemaCompare extends Object
         }
         foreach ($this->schema2->tables as $table2) {
             if ( ! $table2->delete) { // зачем второй раз проходиться
+
                 $table1 = $this->schema1->getTable($table2->name);
 
-                foreach ($table2->fks as $fk1) {
+                if($table1 == null){
+                    continue;
+                }
+                $fkstmp = $table1->fks;
+                var_dump($fkstmp);
+                $fkstmp2 = $table2->fks;
+                var_dump($fkstmp2);
+
+                // may be bug... if I call foreach not by reference it changes table1->fks.. so strange
+                foreach ($fkstmp2 as $fk1) { // <=== it causes changes $fkstmp after enter in foreach loop
+                // foreach ($fkstmp2 as &$fk1) { // <=== it not causes changing of $fkstmp
+                    var_dump($fkstmp);
+                    exit();
+
+                    echo $fk1->column . "\n";
 
                     if ($table1 == null) {
                         $this->addFks[] = $fk1;
@@ -193,10 +208,10 @@ class SchemaCompare extends Object
             foreach ($colDependencies as $dependencyColumn) {
                 $t1 = $this->schema1->getTable($dependencyColumn->table);
                 $c1 = $t1->getColumn($dependencyColumn->column);
-                if ( ! $t1->delete && ! $c1->delete) {
-                    echo "Error: can not delete table, because of fk dependency\n";
-                    exit();
-                }
+//                if ( ! $t1->delete && ! $c1->delete) {
+//                    echo "Error: can not delete table, because of fk dependency\n";
+//                    exit();
+//                }
             }
         }
 
@@ -213,10 +228,10 @@ class SchemaCompare extends Object
                         $t1 = $this->schema1->getTable($dependencyColumn->table);
                         $c1 = $t1->getColumn($dependencyColumn->column);
 
-                        if ( ! $t1->delete && ! $c1->delete) {
-                            echo "Error: can not delete table, because of fk dependency: {$dependencyColumn->table}:{$c1->name} => {$dependencyColumn->refTable}:{$dependencyColumn->refColumn}\n";
-                            exit();
-                        }
+//                        if ( ! $t1->delete && ! $c1->delete) {
+//                            echo "Error: can not delete table, because of fk dependency: {$dependencyColumn->table}:{$c1->name} => {$dependencyColumn->refTable}:{$dependencyColumn->refColumn}\n";
+//                            exit();
+//                        }
 
                         // А теперь делаем правильный порядок удаления
                         $k1 = $this->searchArrayKey($this->dropTables, $table);

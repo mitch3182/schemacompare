@@ -16,6 +16,7 @@ class Tester{
     public function run(){
         $this->InitDb();
         $this->CreateBaseSchema();
+        $this->DeleteTableRightOrder();
     }
 
     public function InitDb(){
@@ -71,28 +72,35 @@ class Tester{
         $this->applySchema('schema.yml');
     }
 
-    public function CreateIntegerColumn(){
-
-    }
-
-    public function MakeIntegerColumnFk(){
-
-    }
-
-    public function ChangeIntegerColumnLength(){
-
-    }
-
-    public function DeleteOriginalTableWithFk(){
-
-    }
-
     /**
      * Удаление таблиц в правильном порядке
      * зависимая таблица ниже основной и наоборот
      */
     public function DeleteTableRightOrder(){
 
+        // restore
+        echo "==================================\n";
+        $this->applySchema('schema.yml');
+
+        // delete fk and delete table
+        echo "==================================\n";
+        $this->applySchema('schema-delete-tables.yml');
+
+//        // restore
+//        echo "==================================\n";
+//        $this->applySchema('schema.yml');
+
+//        // delete fk, column and table
+//        echo "==================================\n";
+//        $this->applySchema('schema-delete-tables-with-related-column.yml');
+//
+//        // restore
+//        echo "==================================\n";
+//        $this->applySchema('schema.yml');
+//
+//        // delete all
+//        echo "==================================\n";
+//        $this->applySchema('schema-empty.yml');
     }
 
     /**

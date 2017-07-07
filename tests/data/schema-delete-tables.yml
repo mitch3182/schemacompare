@@ -1,0 +1,55 @@
+book_author:
+    columns:
+        id:
+            type: int
+            length: 11
+            notNull: true
+            extra: auto_increment
+        name:
+            type: varchar
+            length: 128
+            notNull: true
+        book_id:
+            type: int
+            length: 11
+            notNull: false
+        user_id:
+            type: int
+            length: 11
+            notNull: false
+    fks:
+        book_id: book(id):cascade:cascade
+    pk: id
+role:
+    columns:
+        id:
+            type: int
+            length: 11
+            notNull: true
+            extra: auto_increment
+        name:
+            type: varchar
+            length: 11
+            notNull: false
+        user_id:
+            type: int
+            length: 11
+            notNull: false
+    pk: id
+
+book:
+    columns:
+        id:
+            type: int
+            length: 11
+            notNull: true
+            extra: auto_increment
+        name:
+            type: varchar
+            length: 128
+            notNull: true
+        description:
+            type: text
+            notNull: false
+    pk: id
+
