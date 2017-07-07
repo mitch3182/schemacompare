@@ -115,16 +115,10 @@ class SchemaCompare extends Object
                 if($table1 == null){
                     continue;
                 }
-                $fkstmp = $table1->fks;
-                var_dump($fkstmp);
-                $fkstmp2 = $table2->fks;
-                var_dump($fkstmp2);
 
                 // may be bug... if I call foreach not by reference it changes table1->fks.. so strange
-                foreach ($fkstmp2 as $fk1) { // <=== it causes changes $fkstmp after enter in foreach loop
-                // foreach ($fkstmp2 as &$fk1) { // <=== it not causes changing of $fkstmp
-                    var_dump($fkstmp);
-                    exit();
+//                foreach ($fkstmp2 as $fk1) { // <=== it causes changes $fkstmp after enter in foreach loop
+                 foreach ($table2->fks as &$fk1) { // <=== it not causes changing of $fkstmp
 
                     echo $fk1->column . "\n";
 
