@@ -2,6 +2,8 @@
 
 namespace mitch\schemacompare;
 
+use mitch\schemacompare\providers\MysqlSchemaProvider;
+
 class SchemaCompare extends Object
 {
     /** @var DbConnectionParams */
@@ -112,30 +114,27 @@ class SchemaCompare extends Object
 
                 $table1 = $this->schema1->getTable($table2->name);
 
-                if($table1 == null){
-                    continue;
-                }
 
                 // may be bug... if I call foreach not by reference it changes table1->fks.. so strange
-//                foreach ($fkstmp2 as $fk1) { // <=== it causes changes $fkstmp after enter in foreach loop
-                 foreach ($table2->fks as &$fk1) { // <=== it not causes changing of $fkstmp
+                foreach ($table2->fks as $_fk1) { // <=== it causes changes $fkstmp after enter in foreach loop
+//                 foreach ($table2->fks as &$fk1) { // <=== it not causes changing of $fkstmp
 
-                    echo $fk1->column . "\n";
+                    echo $_fk1->column . "\n";
 
                     if ($table1 == null) {
-                        $this->addFks[] = $fk1;
+                        $this->addFks[] = $_fk1;
                         continue;
                     }
 
-                    $otherFk = $table1->getFk($fk1);
+                    $otherFk = $table1->getFk($_fk1);
 
                     if ($otherFk === false || $table1 == null) {
-                        $this->addFks[] = $fk1;
-                    } else if ( ! $otherFk->compare($fk1)) {
+                        $this->addFks[] = $_fk1;
+                    } else if ( ! $otherFk->compare($_fk1)) {
                         // recreate constraint
                         $otherFk->name = $this->database->getFkNameFromDb($otherFk);
                         $this->dropFks[] = $otherFk;
-                        $this->addFks[] = $fk1;
+                        $this->addFks[] = $_fk1;
                     }
                 }
             }
@@ -196,18 +195,18 @@ class SchemaCompare extends Object
          * Добавляются ключи
          */
 
-        // Удаляем колонки
-        foreach ($this->dropColumns as $column) {
-            $colDependencies = $this->schema1->getColumnDependency($column);
-            foreach ($colDependencies as $dependencyColumn) {
-                $t1 = $this->schema1->getTable($dependencyColumn->table);
-                $c1 = $t1->getColumn($dependencyColumn->column);
+        // более не имеет смысла, т.к. мы проверяем yml при загрузке
+//        foreach ($this->dropColumns as $column) {
+//            $colDependencies = $this->schema1->getColumnDependency($column);
+//            foreach ($colDependencies as $dependencyColumn) {
+//                $t1 = $this->schema1->getTable($dependencyColumn->table);
+//                $c1 = $t1->getColumn($dependencyColumn->column);
 //                if ( ! $t1->delete && ! $c1->delete) {
 //                    echo "Error: can not delete table, because of fk dependency\n";
 //                    exit();
 //                }
-            }
-        }
+//            }
+//        }
 
         $changed = true;
         while ($changed) {
@@ -220,7 +219,7 @@ class SchemaCompare extends Object
                     foreach ($colDependencies as $dependencyColumn) {
 
                         $t1 = $this->schema1->getTable($dependencyColumn->table);
-                        $c1 = $t1->getColumn($dependencyColumn->column);
+//                        $c1 = $t1->getColumn($dependencyColumn->column);
 
 //                        if ( ! $t1->delete && ! $c1->delete) {
 //                            echo "Error: can not delete table, because of fk dependency: {$dependencyColumn->table}:{$c1->name} => {$dependencyColumn->refTable}:{$dependencyColumn->refColumn}\n";
@@ -232,8 +231,8 @@ class SchemaCompare extends Object
                         $k2 = $this->searchArrayKey($this->dropTables, $t1);
                         if ($k1 != -1 && $k2 != -1 && $k1 < $k2) {
                             $changed = true;
-                            break 2;
                             $this->array_swap($this->dropTables, $k1, $k2);
+                            break 2;
                         }
                     }
                 }
@@ -248,7 +247,7 @@ class SchemaCompare extends Object
                 foreach ($colDependencies as $dependencyColumn) {
 
                     $t1 = $this->schema2->getTable($dependencyColumn->table);
-                    $c1 = $t1->getColumn($dependencyColumn->column);
+//                    $c1 = $t1->getColumn($dependencyColumn->column);
 
                     // А теперь делаем правильный порядок удаления
                     $k1 = $this->searchArrayKey($this->createTables, $table);
