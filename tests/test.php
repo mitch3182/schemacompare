@@ -15,7 +15,6 @@ class Tester{
 
     public function run(){
         $this->InitDb();
-        $this->CreateBaseSchema();
         $this->DeleteTableRightOrder();
     }
 
@@ -38,6 +37,7 @@ class Tester{
     }
 
     public function applySchema($schema_file){
+        echo "Apply schema " . $schema_file . "\n";
 
         // first
         $comparator = new SchemaCompare([
@@ -68,9 +68,6 @@ class Tester{
         }
     }
 
-    public function CreateBaseSchema(){
-        $this->applySchema('schema.yml');
-    }
 
     /**
      * Удаление таблиц в правильном порядке
@@ -86,21 +83,21 @@ class Tester{
         echo "==================================\n";
         $this->applySchema('schema-delete-tables.yml');
 
-//        // restore
-//        echo "==================================\n";
-//        $this->applySchema('schema.yml');
+        // restore
+        echo "==================================\n";
+        $this->applySchema('schema.yml');
 
-//        // delete fk, column and table
-//        echo "==================================\n";
-//        $this->applySchema('schema-delete-tables-with-related-column.yml');
-//
-//        // restore
-//        echo "==================================\n";
-//        $this->applySchema('schema.yml');
-//
-//        // delete all
-//        echo "==================================\n";
-//        $this->applySchema('schema-empty.yml');
+        // delete fk, column and table
+        echo "==================================\n";
+        $this->applySchema('schema-delete-tables-with-related-column.yml');
+
+        // restore
+        echo "==================================\n";
+        $this->applySchema('schema.yml');
+
+        // delete all
+        echo "==================================\n";
+        $this->applySchema('schema-empty.yml');
     }
 
     /**

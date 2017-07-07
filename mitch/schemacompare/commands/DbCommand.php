@@ -6,9 +6,13 @@ use mitch\schemacompare\Database;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Common class for commands which use database
+ * Class DbCommand
+ * @package mitch\schemacompare\commands
+ */
 class DbCommand extends Command
 {
     /** @var Database */
@@ -16,6 +20,9 @@ class DbCommand extends Command
     /** @var string */
     public $path;
 
+    /**
+     * @inheritdoc
+     */
     protected function configure()
     {
         $this->setName('unknown')
@@ -29,9 +36,12 @@ class DbCommand extends Command
         ;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->db = new \mitch\schemacompare\Database([
+        $this->db = new Database([
             'database' => $input->getArgument('database'),
             'user' => $input->getOption('user'),
             'password' => $input->getOption('password'),

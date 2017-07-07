@@ -8,14 +8,25 @@ use Symfony\Component\Console\Output\OutputInterface;
 use \mitch\schemacompare\providers\MysqlSchemaProvider;
 use \mitch\schemacompare\SchemaDump;
 
+/**
+ * Create yml from db
+ * Class InspectDbCommand
+ * @package mitch\schemacompare\commands
+ */
 class InspectDbCommand extends DbCommand
 {
+    /**
+     * @inheritdoc
+     */
     protected function configure()
     {
         parent::configure();
         $this->setName('inspectdb');
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);

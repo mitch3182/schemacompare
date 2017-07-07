@@ -5,19 +5,22 @@ namespace mitch\schemacompare\providers;
 use mitch\schemacompare\Table;
 use mitch\schemacompare\Column;
 use mitch\schemacompare\ForeignKey;
+use Symfony\Component\Yaml\Yaml;
 
 class YamlSchemaProvider extends SchemaProvider
 {
     public $path = 'schema.yml';
 
-//    public function dbTypeToLocal($type)
-//    {
-//        return $type;
-//    }
-
+    /**
+     * @inheritdoc
+     * @throws \Exception
+     */
     public function prepareSchema()
     {
-        $data = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->path));
+        $data = Yaml::parse(file_get_contents($this->path));
+        if(!is_array($data)){
+            $data = [];
+        }
 
         foreach ($data as $tableName => $tableInfo) {
 

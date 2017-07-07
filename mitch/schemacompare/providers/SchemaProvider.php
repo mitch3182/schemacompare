@@ -7,18 +7,6 @@ use mitch\schemacompare\Schema;
 
 abstract class SchemaProvider extends Object
 {
-    public $typeConfig = '';
-//    /**
-//     * Must translate db type to local yml type such as int => integer
-//     * @param $type
-//     * @return mixed
-//     */
-//    public function dbTypeToLocal($type){
-//        $config = require __DIR__ . '/../config/type-mappings.php';
-//        $config = $config[$this->typeConfig];
-//        return $config[$type];
-//    }
-
     /**
      * Parse string. For example: article(id) return ['article', 'id']
      * @param $type
@@ -45,8 +33,15 @@ abstract class SchemaProvider extends Object
     /** @var Schema */
     public $schema;
 
+    /**
+     * Create db schema
+     * must not return some value
+     */
     abstract public function prepareSchema();
 
+    /**
+     * Check schema integrity constraints
+     */
     public function checkSchema()
     {
         $schema = $this->schema;

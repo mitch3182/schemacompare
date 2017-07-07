@@ -5,12 +5,23 @@ namespace mitch\schemacompare\commands;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use \mitch\schemacompare\providers\MysqlSchemaProvider;
-use \mitch\schemacompare\SchemaDump;
+use \mitch\schemacompare\providers\YamlSchemaProvider;
+use \mitch\schemacompare\MysqlSchemaGenerator;
+use \mitch\schemacompare\Yii1SchemaGenerator;
+use \mitch\schemacompare\Yii2SchemaGenerator;
+use \mitch\schemacompare\SchemaCompare;
 
+/**
+ * Sync yml schema to db
+ * Class SyncCommand
+ * @package mitch\schemacompare\commands
+ */
 class SyncCommand extends DbCommand
 {
+    /**
+     * @inheritdoc
+     */
     protected function configure()
     {
         parent::configure();
@@ -20,16 +31,19 @@ class SyncCommand extends DbCommand
         $this->addOption('execute', 'e', InputOption::VALUE_OPTIONAL, 'execute if generator is raw', false);
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
 
         $output->writeln("Get schema from db");
-        $provider = new \mitch\schemacompare\providers\MysqlSchemaProvider(['database' => $this->db]);
+        $provider = new MysqlSchemaProvider(['database' => $this->db]);
         $schema1 = $provider->getSchema();
 
         $output->writeln("Get schema yml db");
-        $schema2 = new \mitch\schemacompare\providers\YamlSchemaProvider(['path' => $this->path]);
+        $schema2 = new YamlSchemaProvider(['path' => $this->path]);
         $schema2 = $schema2->getSchema();
 
         $g = $input->getOption('generator');
@@ -38,25 +52,25 @@ class SyncCommand extends DbCommand
         $generator = null;
 
         if ($g === 'raw') {
-            $generator = new \mitch\schemacompare\MysqlSchemaGenerator([
+            $generator = new MysqlSchemaGenerator([
                 'database' => $this->db
             ]);
         }
         if ($g === 'yii1') {
-            $generator = new \mitch\schemacompare\Yii1SchemaGenerator([
+            $generator = new Yii1SchemaGenerator([
                 'database' => $this->db,
                 'path' => $dpath
             ]);
         }
 
         if ($g === 'yii2') {
-            $generator = new \mitch\schemacompare\Yii2SchemaGenerator([
+            $generator = new Yii2SchemaGenerator([
                 'database' => $this->db,
                 'path' => $dpath
             ]);
         }
 
-        $compare = new \mitch\schemacompare\SchemaCompare([
+        $compare = new SchemaCompare([
             'schema1' => $schema1,
             'schema2' => $schema2,
             'generator' => $generator,

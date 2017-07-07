@@ -149,12 +149,12 @@ class SchemaCompare extends Object
     public function prepareStatement()
     {
 
-        foreach ($this->dropColumns as $one) {
-            $this->generator->DropColumn($one);
-        }
-
         foreach ($this->dropFks as $one) {
             $this->generator->DropFk($one);
+        }
+
+        foreach ($this->dropColumns as $one) {
+            $this->generator->DropColumn($one);
         }
 
         foreach ($this->dropTables as $one) {
