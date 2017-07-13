@@ -31,6 +31,54 @@ class YamlSchemaProvider extends SchemaProvider
 
             foreach ($columnsInfo as $columnName => $columnInfo) {
 
+                // short syntax
+                if(is_string($columnInfo)){
+                    if($columnInfo === 'pk'){
+                        $columnInfo = [
+                            'length' => '11',
+                            'type' => 'int',
+                            'notNull' => true,
+                            'extra' => 'auto_increment',
+                        ];
+                        $tableModel->pk = 'id';
+                    }else{
+                        $parts = explode(':', $columnInfo);
+                        $columnInfo = [];
+                        foreach($parts as $part){
+//                            echo $part . "\n";
+                            if(strpos($part, '(') !== false){
+                                list($t, $l) = $this->parseFuncString($part);
+
+                                if($t === 'string'){
+                                    $columnInfo['type'] = 'varchar';
+                                    $columnInfo['length'] = $l;
+                                }
+                                if($t === 'int'){
+                                    $columnInfo['type'] = 'int';
+                                    $columnInfo['length'] = $l;
+                                }
+                                if($t === 'd'){
+                                    $columnInfo['default'] = $l;
+                                }
+                            }
+
+                            if($part === 'notNull'){
+                                $columnInfo['notNull'] = true;
+                            }
+
+                            if($part === 'int'){
+                                $columnInfo['type'] = 'int';
+                                $columnInfo['length'] = 11;
+                            }
+
+                            // Проставление типов без length
+                            if(in_array($part, ['datetime', 'date', 'timestamp', 'text', 'float', 'double'])){
+                                $columnInfo['type'] = $part;
+                            }
+                        }
+                    }
+                }
+
                 $columnModel = new Column;
                 $columnModel->table = $tableModel;
 
@@ -52,7 +100,7 @@ class YamlSchemaProvider extends SchemaProvider
                  * There are some auto generate extra: on update CURRENT_TIMESTAMP and it can give you bad behavior
                  * in second start of comparator
                  **/
-                if($columnModel->dbType == 'timestamp' and $columnModel->notNull and empty($columnModel->default)){
+                if($columnModel->dbType == 'timestamp' && $columnModel->notNull && empty($columnModel->default)){
                     throw new \Exception("You must specify default value for notNull timestamp");
                 }
 

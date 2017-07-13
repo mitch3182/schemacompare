@@ -14,7 +14,7 @@ abstract class SchemaProvider extends Object
      */
     public function parseFuncString($type)
     {
-        preg_match("/([A-z_0-9,]*?)\\(([A-z_0-9,]*?)\\)/", $type, $matches);
+        preg_match("/([A-z_0-9,]*?)\\((.*?)\\)/", $type, $matches);
         if (count($matches) === 3) {
             return [$matches[1], $matches[2]];
         }

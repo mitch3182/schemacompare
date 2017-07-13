@@ -119,7 +119,7 @@ class SchemaCompare extends Object
                 foreach ($table2->fks as $_fk1) { // <=== it causes changes $fkstmp after enter in foreach loop
 //                 foreach ($table2->fks as &$fk1) { // <=== it not causes changing of $fkstmp
 
-                    echo $_fk1->column . "\n";
+//                    echo $_fk1->column . "\n";
 
                     if ($table1 == null) {
                         $this->addFks[] = $_fk1;
