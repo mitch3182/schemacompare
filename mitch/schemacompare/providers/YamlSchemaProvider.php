@@ -66,9 +66,19 @@ class YamlSchemaProvider extends SchemaProvider
                                 $columnInfo['notNull'] = true;
                             }
 
+                            if($part === 'string'){
+                                $columnInfo['type'] = 'varchar';
+                                $columnInfo['length'] = 128;
+                            }
+
                             if($part === 'int'){
                                 $columnInfo['type'] = 'int';
                                 $columnInfo['length'] = 11;
+                            }
+
+                            if($part === 'boolean' || $part === 'bool'){
+                                $columnInfo['type'] = 'tinyint';
+                                $columnInfo['length'] = 1;
                             }
 
                             // Проставление типов без length

@@ -23,7 +23,8 @@ class Database
         );
 
         if($this->conn === false){
-            throw new Exception('Ошибка соединения с базой данных');
+            $err = mysqli_connect_error();
+            throw new \Exception($err);
         }
     }
 
