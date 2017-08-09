@@ -55,6 +55,8 @@ class Yii2SchemaGenerator extends SchemaGenerator
         if(!$funcMode){
             if ($column->notNull) {
                 $def[] = 'not null';
+            }else{
+                $def[] = 'null';
             }
 
             if ($column->default !== null) {
@@ -71,6 +73,8 @@ class Yii2SchemaGenerator extends SchemaGenerator
         // В виде функций
         if ($column->notNull) {
             $def .= '->notNull()';
+        }else{
+            $def .= '->null()';
         }
 
         if ($column->default !== null) {
