@@ -31,6 +31,8 @@ class Yii2SchemaGenerator extends SchemaGenerator
     {
         $length = empty($column->length) ? '' : $column->length;
 
+        $funcMode = true;
+
         $funcMapping = [
             'datetime' => "\$this->dateTime($length)",
             'timestamp' => "\$this->timestamp($length)",
@@ -41,8 +43,32 @@ class Yii2SchemaGenerator extends SchemaGenerator
             'tinyint' => "\$this->boolean()",
         ];
 
-        $def = $funcMapping[$column->dbType];
+        if(!isset($funcMapping[$column->dbType])){
+            $funcMode = false;
+            $def = [];
+            $def[] = $column->dbType;
+        }else{
+            $def = $funcMapping[$column->dbType];
+        }
 
+        // Если не в виде функций
+        if(!$funcMode){
+            if ($column->notNull) {
+                $def[] = 'not null';
+            }
+
+            if ($column->default !== null) {
+                $def[] = "default($column->default)";
+            }
+
+            if ($column->extra) {
+                $def[] = "$column->extra";
+            }
+
+            return '"' . join(' ', $def) . '"';
+        }
+
+        // В виде функций
         if ($column->notNull) {
             $def .= '->notNull()';
         }
@@ -72,7 +98,7 @@ class Yii2SchemaGenerator extends SchemaGenerator
 
         $this->renderTemplate([
             'name' => 'drop_fk',
-            'code' => "\$this->dropForeignKey('$fkName', '{$one->table->name}');",
+            'code' => "\$this->dropForeignKey('$fkName', '{$one->table}');",
         ]);
     }
 
@@ -132,7 +158,7 @@ class Yii2SchemaGenerator extends SchemaGenerator
         $fkName = $this->CreateFkName($one);
         $this->renderTemplate([
             'name' => 'add_fk',
-            'code' => "\$this->addForeignKey('{$fkName}', '{$one->table}', '{$one->column}', '{$one->refTable}', '{$one->refColumn}', '{$one->onDelete}', '{$one->inUpdate}');",
+            'code' => "\$this->addForeignKey('{$fkName}', '{$one->table}', '{$one->column}', '{$one->refTable}', '{$one->refColumn}', '{$one->onDelete}', '{$one->onUpdate}');",
         ]);
     }
 
