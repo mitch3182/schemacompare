@@ -60,7 +60,7 @@ class Yii2SchemaGenerator extends SchemaGenerator
             }
 
             if ($column->default !== null) {
-                $def[] = "default($column->default)";
+                $def[] = "default $column->default";
             }
 
             if ($column->extra) {
@@ -78,7 +78,12 @@ class Yii2SchemaGenerator extends SchemaGenerator
         }
 
         if ($column->default !== null) {
-            $def .= "->defaultValue('{$column->default}')";
+            if($column->default === 'CURRENT_TIMESTAMP'){
+                $def .= "->defaultExpression('{$column->default}')";
+            }else{
+                $def .= "->defaultValue('{$column->default}')";
+            }
+
         }
 
         if ($column->extra) {
@@ -139,7 +144,7 @@ class Yii2SchemaGenerator extends SchemaGenerator
         $colDefinitions = '';
 
         if ( ! empty($one->pk)) {
-            $colDefinitions .= "\t\t\t'id' => \$this->primaryKey(),\n";
+            $colDefinitions .= "\t\t\t'{$one->pk}' => \$this->primaryKey(),\n";
         }
 
         foreach ($one->columns as $column) {

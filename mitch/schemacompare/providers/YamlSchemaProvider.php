@@ -5,6 +5,7 @@ namespace mitch\schemacompare\providers;
 use mitch\schemacompare\Table;
 use mitch\schemacompare\Column;
 use mitch\schemacompare\ForeignKey;
+use function PHPSTORM_META\type;
 use Symfony\Component\Yaml\Yaml;
 
 class YamlSchemaProvider extends SchemaProvider
@@ -127,7 +128,7 @@ class YamlSchemaProvider extends SchemaProvider
 
             $tableModel = new Table();
             $tableModel->name = $tableName;
-            $tableModel->pk = isset($tableInfo['pk']) ? $tableInfo['pk'] : 'id';
+
             $columnsInfo = $tableInfo['columns'];
 
             foreach ($columnsInfo as $columnName => $columnInfo) {
@@ -135,6 +136,11 @@ class YamlSchemaProvider extends SchemaProvider
                 $tableModel->addColumn($columnModel);
             }
 
+            // is pk was set
+            $tableModel->pk = isset($tableInfo['pk']) ? $tableInfo['pk'] : null;
+            if($tableModel->pk == null && $tableModel->getColumn('id') && $tableModel->getColumn('id')->notNull){
+                $tableModel->pk = 'id';
+            }
 
             if (isset($tableInfo['fks'])) {
 

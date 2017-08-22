@@ -41,6 +41,10 @@ class MysqlSchemaProvider extends SchemaProvider
         $columnModel->length = $length != null ? $length : null;
         $columnModel->notNull = $columnInfo['Null'] == 'NO';
         $columnModel->default = $columnInfo['Default'];
+//        if($columnModel->default !== null){
+//            echo var_dump($columnModel->default);
+//        }
+
         $columnModel->extra = $columnInfo['Extra'];
 
         return $columnModel;
@@ -112,6 +116,10 @@ class MysqlSchemaProvider extends SchemaProvider
 
             }
         }
+    }
+
+    public function fetchIndexes(){
+
     }
 
 }

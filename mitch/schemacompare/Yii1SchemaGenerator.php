@@ -27,18 +27,33 @@ class Yii1SchemaGenerator extends SchemaGenerator
         file_put_contents($this->path . '/' . $fileName, $result);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function ColumnDefinition(Column $column)
     {
-        $notNull = $column->notNull ? 'not null' : 'null';
-        $default = $column->default ? "default '$column->default'" : '';
-        $extra = $column->extra;
+        $definition = [];
 
         $dbType = $column->dbType;
         if ($column->length) {
             $dbType .= "({$column->length})";
         }
+        $definition[] = $dbType;
 
-        return "{$dbType} {$notNull} {$default} {$extra}";
+        $notNull = $column->notNull ? 'not null' : 'null';
+        $definition[] = $notNull;
+
+        $default = $column->default ? "default '$column->default'" : '';
+        if(!empty($default)){
+            $definition[] = $default;
+        }
+
+        $extra = $column->extra;
+        if(!empty($extra)){
+            $definition[] = $extra;
+        }
+
+        return join(' ', $definition);
     }
 
     public function DropColumn(Column $one)

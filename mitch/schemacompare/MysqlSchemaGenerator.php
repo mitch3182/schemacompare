@@ -23,7 +23,13 @@ class MysqlSchemaGenerator extends SchemaGenerator
     public function ColumnDefinition(Column $column)
     {
         $notNull = $column->notNull ? 'not null' : 'null';
-        $default = $column->default != null ? "default $column->default" : '';
+
+        if($column->default === 'CURRENT_TIMESTAMP'){
+            $default = $column->default != null ? "default $column->default" : '';
+        }else{
+            $default = $column->default != null ? "default '$column->default'" : '';
+        }
+
         $extra = $column->extra;
 
         $dbType = $column->dbType;

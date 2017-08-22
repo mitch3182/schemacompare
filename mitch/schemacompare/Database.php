@@ -89,6 +89,10 @@ FROM
         return $this->fetchAllAssoc($res);
     }
 
+    public function fetchIndexes(){
+
+    }
+
     public function getForeignKeys($table)
     {
         $q = "
