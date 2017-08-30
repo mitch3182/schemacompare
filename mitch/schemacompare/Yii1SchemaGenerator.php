@@ -12,7 +12,7 @@ class Yii1SchemaGenerator extends SchemaGenerator
     {
         $micro_date = microtime();
         $date_array = explode(" ", $micro_date);
-        $time = date('ymd_His_') . substr($date_array[0], 2);
+        $time = gmdate('ymd_His_') . substr($date_array[0], 2);
 
         extract($variables);
         $classname = 'm' . $time . '_' . $name;

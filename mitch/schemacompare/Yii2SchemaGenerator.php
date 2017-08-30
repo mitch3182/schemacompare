@@ -12,7 +12,7 @@ class Yii2SchemaGenerator extends SchemaGenerator
     {
         $micro_date = microtime();
         $date_array = explode(" ", $micro_date);
-        $time = date('ymd_His_') . substr($date_array[0], 2);
+        $time = gmdate('ymd_His_') . substr($date_array[0], 2);
 
         extract($variables);
         $classname = 'm' . $time . '_' . $name;
@@ -43,19 +43,19 @@ class Yii2SchemaGenerator extends SchemaGenerator
             'tinyint' => "\$this->boolean()",
         ];
 
-        if(!isset($funcMapping[$column->dbType])){
+        if ( ! isset($funcMapping[$column->dbType])) {
             $funcMode = false;
             $def = [];
             $def[] = $column->dbType;
-        }else{
+        } else {
             $def = $funcMapping[$column->dbType];
         }
 
         // Если не в виде функций
-        if(!$funcMode){
+        if ( ! $funcMode) {
             if ($column->notNull) {
                 $def[] = 'not null';
-            }else{
+            } else {
                 $def[] = 'null';
             }
 
@@ -73,14 +73,14 @@ class Yii2SchemaGenerator extends SchemaGenerator
         // В виде функций
         if ($column->notNull) {
             $def .= '->notNull()';
-        }else{
+        } else {
             $def .= '->null()';
         }
 
         if ($column->default !== null) {
-            if($column->default === 'CURRENT_TIMESTAMP'){
+            if ($column->default === 'CURRENT_TIMESTAMP') {
                 $def .= "->defaultExpression('{$column->default}')";
-            }else{
+            } else {
                 $def .= "->defaultValue('{$column->default}')";
             }
 
@@ -143,16 +143,20 @@ class Yii2SchemaGenerator extends SchemaGenerator
     {
         $colDefinitions = '';
 
-        if ( ! empty($one->pk)) {
-            $colDefinitions .= "\t\t\t'{$one->pk}' => \$this->primaryKey(),\n";
-        }
 
         foreach ($one->columns as $column) {
 
-            if ($column->name == 'id') continue;
+//            if ($column->name == 'id') continue;
 
             $columnDefinition = $this->ColumnDefinition($column);
+
+            // todo: set PK
+            if ($one->pk && $column->name == $one->pk) {
+                $columnDefinition .= ' . " PRIMARY KEY"';
+            }
+
             $colDefinitions .= "\t\t\t'{$column->name}' => $columnDefinition,\n";
+
         }
 
         $this->renderTemplate([
